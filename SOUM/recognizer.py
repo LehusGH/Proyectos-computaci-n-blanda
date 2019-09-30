@@ -27,8 +27,16 @@ def recognize(image_file):
     array = cnn.predict(x)
     resultado = array[0]
     respuesta = np.argmax(resultado)
+    if respuesta == 0:
+        print('El semáforo está en amarillo')
+    elif respuesta == 1:
+        print('El semáforo está en rojo')
+    elif respuesta == 2:
+        print('El semáforo está en verde')
+    else:
+        print('No se puede reconocer como semáforo')
     return respuesta
 
-print(recognize('amarillo.jpg'))
-print(recognize('amarillop.jpg'))
-print(recognize('verdep.jpg'))
+recognize('imagen1.jpg')
+recognize('imagen2.jpg')
+recognize('imagen3.jpg')
