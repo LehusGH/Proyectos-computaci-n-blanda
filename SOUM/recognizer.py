@@ -1,6 +1,10 @@
 import numpy as np
+import keras
 from keras.preprocessing.image import load_img, img_to_array
 from keras.models import load_model
+from keras.utils import CustomObjectScope
+from keras.initializers import glorot_uniform
+import h5py
 
 longitud, altura = 100, 100
 
@@ -9,7 +13,9 @@ modelo = './Modelo/modelo.h5'
 pesos_modelo = './Modelo/pesos.h5'
 
 #Carga del modelo en la red neuronal y sus respectivos pesos
-cnn = load_model(modelo)
+#cnn = load_model(modelo)
+with CustomObjectScope({'GlorotUniform': glorot_uniform()}):
+        cnn = load_model(modelo)
 cnn.load_weights(pesos_modelo)
 
 #Funcion para leer la imagen y clasificarla segun sus caracteristicas
@@ -23,6 +29,6 @@ def recognize(image_file):
     respuesta = np.argmax(resultado)
     return respuesta
 
+print(recognize('amarillo.jpg'))
 print(recognize('amarillop.jpg'))
-print(recognize('rojop.jpg'))
 print(recognize('verdep.jpg'))

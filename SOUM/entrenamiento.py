@@ -9,9 +9,9 @@ from tensorflow.python.keras import backend as K
 
 K.clear_session()
 
-data_entrenamiento = './Data/Entrenamiento'
-data_validacion = './Data/Validacion'
-direccion = './Modelo/'
+data_entrenamiento = 'Data/Entrenamiento'
+data_validacion = 'Data/Validacion'
+direccion = 'Modelo/'
 
 #------------------- PARAMETROS -----------------------
 #Numero de iteaciones sobre el dataset construido
@@ -41,8 +41,8 @@ lr = 0.0005
 #------------------------------------------------------
 entrenamiento_datagen = ImageDataGenerator(
     rescale = 1./255,
-    shear_range = 0.3, 
-    zoom_range = 0.3, 
+    shear_range = 0.3,
+    zoom_range = 0.3,
     horizontal_flip = True
 )
 
@@ -51,16 +51,16 @@ validacion_datagen = ImageDataGenerator(
 )
 
 imagen_entrenamiento = entrenamiento_datagen.flow_from_directory(
-    data_entrenamiento, 
-    target_size = (altura, longitud), 
+    data_entrenamiento,
+    target_size = (altura, longitud),
     batch_size = batch_size,
     class_mode = 'categorical'  #Es una clasificacion categorica para amarillo, verde y rojo
 )
 
 imagen_validacion = validacion_datagen.flow_from_directory(
-    data_validacion, 
-    target_size = (altura, longitud), 
-    batch_size = batch_size, 
+    data_validacion,
+    target_size = (altura, longitud),
+    batch_size = batch_size,
     class_mode = 'categorical'
 )
 #------------------------------------------------------
@@ -70,13 +70,13 @@ imagen_validacion = validacion_datagen.flow_from_directory(
 cnn = Sequential()  #Es una composicion de capas
 
 #Capa 1 de convolucion
-cnn.add(Convolution2D(filtros_conv1, tam_filtro1, padding = 'same', input_shape = (altura, longitud, 3), Activation = 'relu'))
+cnn.add(Convolution2D(filtros_conv1, tam_filtro1, padding = 'same', input_shape = (altura, longitud, 3), activation = 'relu'))
 
 #Capa 1 de pooling
 cnn.add(MaxPooling2D(pool_size = tam_pool))
 
 #Capa 2 de convolucion
-cnn.add(Convolution2D(filtros_conv2, tam_filtro2, padding = "same", Activation = 'relu'))
+cnn.add(Convolution2D(filtros_conv2, tam_filtro2, padding = "same", activation = 'relu'))
 
 #Capa 1 de pooling
 cnn.add(MaxPooling2D(pool_size = tam_pool))
@@ -86,7 +86,7 @@ cnn.add(MaxPooling2D(pool_size = tam_pool))
 cnn.add(Flatten())
 
 #La red neuronal consta de 256 neuronas por capa
-cnn.add(Dense(256, Activation = 'relu'))
+cnn.add(Dense(256, activation = 'relu'))
 
 #A la capa densa se le apaga el 50% de las neuronas
 #Esto se hace para que no se cree un unico camino donde solo
@@ -97,16 +97,18 @@ cnn.add(Dropout(0.5))
 #Capa clasificadora
 #Su salida es la porcion de la imagen que se detecta como
 #Semaforo en rojo, verde y amarillo
-cnn.add(Dense(clases, Activation = 'softmax'))
+cnn.add(Dense(clases, activation = 'softmax'))
 
 cnn.compile(loss = 'categorical_crossentropy', optimizer = optimizers.Adam(lr = lr), metrics = ['accuracy'])
- 
-cnn.fit(imagen_entrenamiento, step_per_epoch = pasos, epochs = epocas, validation_data = imagen_validacion, validation_steps = pasos_validacion)
+
+cnn.fit(imagen_entrenamiento, nb_epoch = pasos, epochs = epocas, validation_data = imagen_validacion, validation_steps = pasos_validacion)
 #------------------------------------------------------
 
 #Guardar el modelo de entrenamiento
-if not os.path.exists(direccion):
+"""if not os.path.exists(direccion):
     #Crear la carpeta si se borra o no existe
-    os.mkdir(direccion)
-cnn.save('./Modelo/modelo.h5')
-cnn.save_weights('./Modelo/pesos.h5')
+    os.mkdir(direccion)"""
+
+
+cnn.save('Modelo/modelo.h5')
+cnn.save_weights('Modelo/pesos.h5')
