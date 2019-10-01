@@ -7,7 +7,7 @@ from random import randrange
 
 #Variables para reloj
 delay_clock = pygame.time.Clock()
-sleep = 30
+sleep = 20
 
 #Colores para la serpiente, suelo y comida
 color_serpiente = (200, 200, 200)
@@ -156,17 +156,19 @@ def moverSerpiente(cabeza, ciclo, direccion):
 
 
 #Realiza o no una accion si encuentra o no comida
-def askComida(adrs_snake):
+def askComida(adrs_snake, mapa, pos_comida):
+    ce = 0
     if mapa[adrs_snake[len(adrs_snake) - 1][0]][adrs_snake[len(adrs_snake) - 1][1]] == comida:
         mapa[adrs_snake[len(adrs_snake) - 1][0]][adrs_snake[len(adrs_snake) - 1][1]] = 0
-        #comida_encontrada = comida_encontrada + 1
+        ce += 1
         #Es necesario cambiar la posicion de la comida cada vez que sea encontrada
         pos_comida = [randrange(celdas_y), randrange(celdas_x)]
         while(mapa[pos_comida[0]][pos_comida[1]] == muro):
             pos_comida == [randrange(celdas_y), randrange(celdas_x)]
-        mapa[pos_comida[0]][pos_comida[1]] == 2
-    print(comida_encontrada)
     params = moverSerpiente(pos_serpiente[3], ciclo, direccion)
+    params.append(mapa)
+    params.append(pos_comida)
+    params.append(ce)
     return params
     #Despues de que se revisa si hay comida, se pasa a modelar el siguiente movimiento
     #moverSerpiente()
@@ -215,9 +217,14 @@ while True:
     ventana.fill(color_suelo)
     dibujarMapa()
     dibujarSerpiente(pos_serpiente)
-    params = askComida(pos_serpiente)
+    params = askComida(pos_serpiente, mapa, pos_comida)
     ciclo = params[0]
     direccion = params[1]
+    mapa = params[2]
+    pos_comida = params[3]
+    comida_encontrada += params[4]
+    print('Comida encontrada:', comida_encontrada)
+    mapa[pos_comida[0]][pos_comida[1]] = comida
 
     #La serpiente comienza a realizar movimientos
 
